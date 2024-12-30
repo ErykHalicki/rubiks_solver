@@ -2,16 +2,18 @@ package main
 
 import (
     "fmt"
-    "math"
 )
+
+var mapping = [6][4]int8{{2,3,1,4},{0,3,5,4},{5,3,0,4},{2,5,1,0},{2,0,1,5},{1,3,2,4}} 
+// mappings for each rotation (face rotation order)
 
 type Face [3][3]int8
 
 // Flattened rubik's cube representation
 // Faces:
-//   1
-// 4 0 2 5
 //   3
+// 2 0 1 5
+//   4
 // 0 = front face, 5 = back face, 4 = bottom face
 
 type Cube struct {
@@ -83,14 +85,25 @@ func (f *Face) rotate (clockwise bool){ // rotates face in place
     }
 }
 
-func (c *Cube) move (m int) Cube{ // apply the movement in place
-    // movement switch
-    var abs int
-    abs = m
-    if m < 0 {abs = -m}
-    c.faces[abs](m < 0)
+func (c *Cube) move (m int){ // apply the movement in place
+    var temp Cube
+    copy(temp.faces[:], c.faces[:])
 
-    return c
+    var face int
+    face = m
+    if face > 5 {face -= 6}
+    c.faces[face].rotate(m < 6) // rotate the selected face (0-5 = clockwise, 6-11 - ccw)
+    
+    // after selected face is rotated, move the required squares on the other faces
+    
+    for i:=0; i < 4; i++ {
+        if(face == 3 || face == 4){
+            //switch rows and columns
+        } else {
+            mapping[face][i]
+        }
+    }
+
 }
 
 func (c Cube) asString () string{ // returns a string representation of the cube, used for the trie
