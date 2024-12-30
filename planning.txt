@@ -1,0 +1,21 @@
+1. represent the cube
+- rubiks cube class
+- 3d array
+    - array of colors
+    - 6 x 3 x 3
+    - flattened representation of cube
+- isSolved
+- solve score?
+
+2. add cube movements
+- all movements are relative to "front" face in the representation
+
+3. create graph of cube states
+- graph node class
+- contains a cube and all neighbors, as well as last move
+
+4. do a* search, looking for solved cube position
+- heuristic: portion of cubes in "correct" position
+    - if 2 colors are touching and same color, then they are "correct"
+
+5. 
