@@ -4,8 +4,6 @@ import (
     "fmt"
 )
 
-var mapping = [6][4]int8{{2,3,1,4},{0,3,5,4},{5,3,0,4},{2,5,1,0},{2,0,1,5},{1,3,2,4}} 
-// mappings for each rotation (face rotation order)
 
 type Face [3][3]int8
 
@@ -85,7 +83,7 @@ func (f *Face) rotate (clockwise bool){ // rotates face in place
     }
 }
 
-func (c *Cube) move (m int){ // apply the movement in place
+func (c *Cube) rotate (m int){ // apply the movement in place
     var temp Cube
     copy(temp.faces[:], c.faces[:])
 
@@ -96,14 +94,43 @@ func (c *Cube) move (m int){ // apply the movement in place
     
     // after selected face is rotated, move the required squares on the other faces
     
-    for i:=0; i < 4; i++ {
-        if(face == 3 || face == 4){
-            //switch rows and columns
-        } else {
-            mapping[face][i]
+    var mapping = [6][4]int8{{2,3,1,4},{0,3,5,4},{5,3,0,4},{2,5,1,0},{2,0,1,5},{1,3,2,4}} 
+    // mappings for each rotation (face rotation order)
+
+    for i:=0; i < 3; i++ {
+        switch(face){
+            case 0:
+                c.faces[mapping[face][0]][i][2] = temp.faces[mapping[face][3]][0][i]
+                c.faces[mapping[face][1]][2][i] = temp.faces[mapping[face][0]][i][2]
+                c.faces[mapping[face][2]][i][0] = temp.faces[mapping[face][1]][2][i]
+                c.faces[mapping[face][3]][0][i] = temp.faces[mapping[face][2]][i][0]
+            case 1:
+                c.faces[mapping[face][0]][i][2] = temp.faces[mapping[face][3]][i][2]
+                c.faces[mapping[face][1]][i][2] = temp.faces[mapping[face][0]][i][2]
+                c.faces[mapping[face][2]][i][0] = temp.faces[mapping[face][1]][i][2]
+                c.faces[mapping[face][3]][i][2] = temp.faces[mapping[face][2]][i][0]
+            case 2:
+                c.faces[mapping[face][0]][2-i][2] = temp.faces[mapping[face][3]][i][0]
+                c.faces[mapping[face][1]][i][0] = temp.faces[mapping[face][0]][2-i][2]
+                c.faces[mapping[face][2]][i][0] = temp.faces[mapping[face][1]][i][0]
+                c.faces[mapping[face][3]][i][0] = temp.faces[mapping[face][2]][i][0]
+            case 3:
+                c.faces[mapping[face][0]][0][i] = temp.faces[mapping[face][3]][0][i]
+                c.faces[mapping[face][1]][0][i] = temp.faces[mapping[face][0]][0][i]
+                c.faces[mapping[face][2]][0][i] = temp.faces[mapping[face][1]][0][i]
+                c.faces[mapping[face][3]][0][i] = temp.faces[mapping[face][2]][0][i]
+            case 4:
+                c.faces[mapping[face][0]][2][i] = temp.faces[mapping[face][3]][2][i]
+                c.faces[mapping[face][1]][2][i] = temp.faces[mapping[face][0]][2][i]
+                c.faces[mapping[face][2]][2][i] = temp.faces[mapping[face][1]][2][i]
+                c.faces[mapping[face][3]][2][i] = temp.faces[mapping[face][2]][2][i]
+            case 5:
+                c.faces[mapping[face][0]][i][2] = temp.faces[mapping[face][3]][2][2-i]
+                c.faces[mapping[face][1]][0][i] = temp.faces[mapping[face][0]][i][2]
+                c.faces[mapping[face][2]][2-i][0] = temp.faces[mapping[face][1]][0][i]
+                c.faces[mapping[face][3]][2][2-i] = temp.faces[mapping[face][2]][2-i][0]
         }
     }
-
 }
 
 func (c Cube) asString () string{ // returns a string representation of the cube, used for the trie
@@ -112,6 +139,6 @@ func (c Cube) asString () string{ // returns a string representation of the cube
 
 func main() {
     c := initCube()
-    fmt.Println(c.score)
+    fmt.Println(c.faces)
     c.faces[1].rotate(true)
 }
