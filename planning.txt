@@ -4,15 +4,16 @@
     - array of colors
     - 6 x 3 x 3
     - flattened representation of cube
-- isSolved
-- solve score?
 
 2. add cube movements
-- all movements are relative to "front" face in the representation
+- 6 possible face rotations, times 2 for reverse 
+- visualize with image
 
 3. create graph of cube states
 - graph node class
-- contains a cube and all neighbors, as well as last move
+- contains a cube and score
+
+3.5. create move generation
 
 4. do a* search, looking for solved cube position
 - heuristic: portion of cubes in "correct" position
