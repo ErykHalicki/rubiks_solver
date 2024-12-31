@@ -14,9 +14,8 @@
 - contains a cube and score
 
 3.5. create move generation
+- generate move recursively
 
 4. do a* search, looking for solved cube position
 - heuristic: portion of cubes in "correct" position
     - if 2 colors are touching and same color, then they are "correct"
-
-5. 
