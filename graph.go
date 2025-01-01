@@ -48,8 +48,10 @@ func nodeFromString (data string) CubeNode {
 
 type CubeHeap []CubeNode
 
+var mult float32
+
 func (h CubeHeap) Len() int           { return len(h) }
-func (h CubeHeap) Less(i, j int) bool { return h[i].distance + (294 - h[i].score)*2 <  h[j].distance + (294 - h[j].score)*2 }
+func (h CubeHeap) Less(i, j int) bool { return float32(h[i].distance) - float32(h[i].score)*mult <  float32(h[j].distance) - float32(h[j].score)*mult }
 func (h CubeHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
 
 func (h *CubeHeap) Push(x any) {
@@ -67,6 +69,7 @@ func (h *CubeHeap) Pop() any {
 func AStarSearch (root string) []int8 {
     // start at root, generate moves and select the move with the best score
     var result []int8
+    mult = 0.5
     current := nodeFromString(root)
 
     nodeIndex := make(map[string]CubeNode)
@@ -90,7 +93,8 @@ func AStarSearch (root string) []int8 {
         current.visited = true
         if(current.score > topScore) {
             topScore = current.score
-            if topScore > 200 {current.score = 0}
+            mult = 0.4 * float32(topScore) / 260.0
+            if(topScore > 255) {mult = 5}
             fmt.Println(topScore, current.cube.asString())
         }
         for _, child := range children {
@@ -113,8 +117,6 @@ func AStarSearch (root string) []int8 {
     for current.cube.asString() != root{ 
         result = append(result, current.lastMove)
         current.cube.draw("cubes/" + strconv.Itoa(counter) + ".png")
-        fmt.Println(strconv.Itoa(counter) + ": " + strconv.Itoa(int(current.lastMove)))
-        counter ++
         node, _ := nodeIndex[current.cube.asString()]
         if node.lastMove < 6 {
             //println(current.lastMove+6)
@@ -123,8 +125,7 @@ func AStarSearch (root string) []int8 {
             //println(current.lastMove-6)
             current.cube.rotate(node.lastMove-6)
         }
-        current = nodeIndex[current.cube.asString()]
-        
+        current = nodeIndex[current.cube.asString()]    
     }
     temp := make([]int8, len(result))
     copy(temp[:], result[:])
@@ -137,16 +138,21 @@ func AStarSearch (root string) []int8 {
 func main() {
     var root CubeNode
     root.cube = initCube()
-    root.cube = cubeFromString("352303043522512500412222051533334544311141102001055444")
-    root.cube.draw("cubes/start.png")
-    // scramble := root.cube.scramble(20)
- 
-    //fmt.Println(BestFirstSearch(root.cube.asString()))
-    //fmt.Println("solve moves: ", AStarSearch(root.cube.asString()))
-
     // green = 0, yellow = 1, white = 2, red = 3, orange = 4, blue = 5 
-    // 352303043 522512500 412222051 533334544 311141102 001055444
-    fmt.Println("solve moves: ", AStarSearch("352303043522512500412222051533334544311141102001055444"))
+    root.cube = cubeFromString("005500444343215154131024350300232431215341232210254515")
+    //scramble := root.cube.scramble(40)
+    root.cube.draw("cubes/start.png")
+ 
+    solve := AStarSearch(root.cube.asString())
+
+     
+    for i, move := range(solve) {
+        var moveString string
+        switch move {
+            case 0:
+        }
+        fmt.Println("move " + strconv.Itoa(i) + ": " + moveString)
+    }
     
-    // fmt.Println("scramble moves: " , scramble)
+    //fmt.Println("scramble moves: " , scramble)
 }

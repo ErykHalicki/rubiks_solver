@@ -73,5 +73,5 @@ func (c *Cube) draw(filePath string) {
 		panic(err)
 	}
 
-	println("cube image saved in " + filePath)
+	// println("cube image saved in " + filePath)
 }
