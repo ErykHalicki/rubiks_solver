@@ -2,6 +2,7 @@ package main
 
 import (
     "strconv"
+    "math/rand"
 )
 
 type Face [3][3]int8
@@ -114,14 +115,14 @@ func (c *Cube) rotate (m int8){ // apply the movement in place
         switch(face){
             case 0:
                 c[mapping[face][0]][i][2] = temp[mapping[face][3]][0][i]
-                c[mapping[face][1]][2][i] = temp[mapping[face][0]][i][2]
+                c[mapping[face][1]][2][2-i] = temp[mapping[face][0]][i][2]
                 c[mapping[face][2]][i][0] = temp[mapping[face][1]][2][i]
-                c[mapping[face][3]][0][i] = temp[mapping[face][2]][i][0]
+                c[mapping[face][3]][0][2-i] = temp[mapping[face][2]][i][0]
             case 1:
                 c[mapping[face][0]][i][2] = temp[mapping[face][3]][i][2]
                 c[mapping[face][1]][i][2] = temp[mapping[face][0]][i][2]
-                c[mapping[face][2]][i][0] = temp[mapping[face][1]][i][2]
-                c[mapping[face][3]][i][2] = temp[mapping[face][2]][i][0]
+                c[mapping[face][2]][2-i][0] = temp[mapping[face][1]][i][2]
+                c[mapping[face][3]][i][2] = temp[mapping[face][2]][2-i][0]
             case 2:
                 c[mapping[face][0]][2-i][2] = temp[mapping[face][3]][i][0]
                 c[mapping[face][1]][i][0] = temp[mapping[face][0]][2-i][2]
@@ -154,7 +155,7 @@ func (c *Cube) asString () string{ // returns a string representation of the cub
     for f := 0; f < 6; f++{
         for x := 0; x < 3; x++{
             for y := 0; y < 3; y++{
-                result += strconv.Itoa(int(c[f][y][x]))
+                result += strconv.Itoa(int(c[f][x][y]))
             }
         }
     }
@@ -167,10 +168,21 @@ func  cubeFromString (data string) Cube{ // returns a string representation of t
     for f := 0; f < 6; f++{
         for x := 0; x < 3; x++{
             for y := 0; y < 3; y++{
-                c[f][y][x] = int8(data[counter]-48)
+                c[f][x][y] = int8(data[counter]-48)
                 counter ++
             }
         }
     }
     return c
+}
+
+func (c *Cube) scramble (moves int) []int8 {
+    var result []int8
+    for i := 0; i < moves; i++ {
+        move := int8(rand.Intn(12))
+        c.rotate(move)
+        result = append(result, move)
+        //println(move)
+    }
+    return result
 }

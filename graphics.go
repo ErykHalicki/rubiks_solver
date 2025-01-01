@@ -33,7 +33,7 @@ func drawRect (img *image.RGBA, x int, y int, size int, color_ int8) {
 	}
 }
 
-func (c *Cube) draw() {
+func (c *Cube) draw(filePath string) {
 	// Image dimensions
 	width, height := 600, 500
 
@@ -63,7 +63,7 @@ func (c *Cube) draw() {
 
 	
 	// Save the image to a file
-	file, err := os.Create("cubes/cube.png")
+	file, err := os.Create(filePath)
 	if err != nil {
 		panic(err)
 	}
@@ -73,5 +73,5 @@ func (c *Cube) draw() {
 		panic(err)
 	}
 
-	println("cube image saved in cubes/cube.png")
+	println("cube image saved in " + filePath)
 }
