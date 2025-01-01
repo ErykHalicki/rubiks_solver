@@ -113,10 +113,10 @@ func AStarSearch (root string) []int8 {
         }
         
     }
-    counter := 0
-    for current.cube.asString() != root{ 
+    var solveCubes []Cube
+    for current.cube.asString() != root{
         result = append(result, current.lastMove)
-        current.cube.draw("cubes/" + strconv.Itoa(counter) + ".png")
+        solveCubes = append(solveCubes, current.cube)
         node, _ := nodeIndex[current.cube.asString()]
         if node.lastMove < 6 {
             //println(current.lastMove+6)
@@ -130,6 +130,7 @@ func AStarSearch (root string) []int8 {
     temp := make([]int8, len(result))
     copy(temp[:], result[:])
     for i := len(result)-1; i>=0; i-- {
+        solveCubes[i].draw("cubes/" + strconv.Itoa(len(result)-i-1) + ".png")
         result[len(result)-i-1] = temp[i] // reverse
     }
     return result
@@ -139,19 +140,15 @@ func main() {
     var root CubeNode
     root.cube = initCube()
     // green = 0, yellow = 1, white = 2, red = 3, orange = 4, blue = 5 
-    root.cube = cubeFromString("005500444343215154131024350300232431215341232210254515")
+    root.cube = cubeFromString("550203511423011310243123551021230241445343202053550444")
     //scramble := root.cube.scramble(40)
     root.cube.draw("cubes/start.png")
  
     solve := AStarSearch(root.cube.asString())
 
-     
+    moveStrings := []string{"F","R","L","U","D","B","F'","R'","L'","U'","D'","B'"} 
     for i, move := range(solve) {
-        var moveString string
-        switch move {
-            case 0:
-        }
-        fmt.Println("move " + strconv.Itoa(i) + ": " + moveString)
+        fmt.Println("move " + strconv.Itoa(i) + ": " + moveStrings[move])
     }
     
     //fmt.Println("scramble moves: " , scramble)
