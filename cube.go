@@ -186,3 +186,29 @@ func (c *Cube) scramble (moves int) []int8 {
     }
     return result
 }
+
+func (c *Cube) isValid() bool {
+    // Count the number of each color
+    var colorCounts [6]int
+    
+    for f := 0; f < 6; f++ {
+        for x := 0; x < 3; x++ {
+            for y := 0; y < 3; y++ {
+                color := c[f][x][y]
+                if color < 0 || color > 5 {
+                    return false // Invalid color
+                }
+                colorCounts[color]++
+            }
+        }
+    }
+    
+    // Each color should appear exactly 9 times (one face = 9 squares)
+    for i := 0; i < 6; i++ {
+        if colorCounts[i] != 9 {
+            return false
+        }
+    }
+    
+    return true
+}

@@ -4,6 +4,7 @@ import(
     "fmt"
     "strconv"
     "container/heap"
+    "os"
 )
 
 type CubeNode struct{
@@ -137,19 +138,50 @@ func AStarSearch (root string) []int8 {
 }
 
 func main() {
+    // Check if cube string argument is provided
+    if len(os.Args) < 2 {
+        fmt.Println("Usage: go run . <cube_string>")
+        fmt.Println("Example: go run . \"000000000111111111222222222333333333444444444555555555\"")
+        os.Exit(1)
+    }
+    
+    cubeString := os.Args[1]
+    
+    // Validate cube string length
+    if len(cubeString) != 54 {
+        fmt.Printf("Error: Cube string must be exactly 54 characters. Got %d characters.\n", len(cubeString))
+        os.Exit(1)
+    }
+    
+    // Validate cube string characters
+    for i, char := range cubeString {
+        if char < '0' || char > '5' {
+            fmt.Printf("Error: Invalid character '%c' at position %d. Only digits 0-5 are allowed.\n", char, i)
+            os.Exit(1)
+        }
+    }
+    
     var root CubeNode
-    root.cube = initCube()
-    // green = 0, yellow = 1, white = 2, red = 3, orange = 4, blue = 5 
-    root.cube = cubeFromString("550203511423011310243123551021230241445343202053550444")
-    //scramble := root.cube.scramble(40)
+    root.cube = cubeFromString(cubeString)
+    
+    // Validate cube configuration
+    if !root.cube.isValid() {
+        fmt.Println("Error: Invalid cube configuration. Each color must appear exactly 9 times.")
+        os.Exit(1)
+    }
+    
     root.cube.draw("cubes/start.png")
  
     solve := AStarSearch(root.cube.asString())
 
     moveStrings := []string{"F","R","L","U","D","B","F'","R'","L'","U'","D'","B'"} 
-    for i, move := range(solve) {
-        fmt.Println("move " + strconv.Itoa(i) + ": " + moveStrings[move])
-    }
     
-    //fmt.Println("scramble moves: " , scramble)
+    // Apply each move and output both the move and resulting cube state
+    solveCube := root.cube
+    fmt.Printf("step 0: START|%s\n", solveCube.asString())
+    
+    for i, move := range(solve) {
+        solveCube.rotate(move)
+        fmt.Printf("step %d: %s|%s\n", i+1, moveStrings[move], solveCube.asString())
+    }
 }
